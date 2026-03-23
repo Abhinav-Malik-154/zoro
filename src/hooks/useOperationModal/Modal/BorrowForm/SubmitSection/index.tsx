@@ -1,0 +1,97 @@
+/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
+/** @jsxImportSource @emotion/react */
+import { FormError } from '../useForm/types';
+import { useStyles } from './styles';
+import BigNumber from 'bignumber.js';
+import { PrimaryButton } from '@/components';
+import React, { useContext, useMemo } from 'react';
+import { useTranslation } from '@/translation';
+import { GeolocationContext } from '@/context/GeolocationContext';
+export interface SubmitSectionProps {
+  isFormValid: boolean;
+  isFormSubmitting: boolean;
+  safeLimitTokens: string;
+  fromTokenAmountTokens: string;
+  formError?: FormError;
+}
+
+export const SubmitSection: React.FC<SubmitSectionProps> = ({
+  isFormValid,
+  isFormSubmitting,
+  safeLimitTokens,
+  fromTokenAmountTokens,
+  formError,
+}) => {
+  const { t } = useTranslation();
+  const styles = useStyles();
+  const { geolocation } = useContext(GeolocationContext);
+
+  const isHighRiskBorrow = useMemo(
+    () =>
+      new BigNumber(fromTokenAmountTokens).isGreaterThanOrEqualTo(
+        safeLimitTokens
+      ),
+    [fromTokenAmountTokens, safeLimitTokens]
+  );
+
+  const submitButtonLabel = useMemo(() => {
+    if (geolocation) {
+      return t('blockedRegion');
+    }
+
+    if (!isFormSubmitting && formError === 'BORROW_CAP_ALREADY_REACHED') {
+      return t('operationModal.borrow.submitButtonLabel.borrowCapReached');
+    }
+
+    if (!isFormSubmitting && formError === 'HIGHER_THAN_BORROWABLE_AMOUNT') {
+      return t(
+        'operationModal.borrow.submitButtonLabel.amountHigherThanBorrowableAmount'
+      );
+    }
+
+    if (!isFormSubmitting && formError === 'HIGHER_THAN_BORROW_CAP') {
+      return t(
+        'operationModal.borrow.submitButtonLabel.amountHigherThanBorrowCap'
+      );
+    }
+
+    if (!isFormValid) {
+      return t('operationModal.borrow.submitButtonLabel.enterValidAmount');
+    }
+
+    if (!isFormSubmitting && isHighRiskBorrow) {
+      return t('operationModal.borrow.submitButtonLabel.borrowHighRiskAmount');
+    }
+    if (isFormSubmitting) {
+      return t('operationModal.borrow.submitButtonLabel.borrowing');
+    }
+
+    return t('operationModal.borrow.submitButtonLabel.borrow');
+  }, [
+    fromTokenAmountTokens,
+    isFormValid,
+    formError,
+    isHighRiskBorrow,
+    isFormSubmitting,
+  ]);
+
+  return (
+    <PrimaryButton
+      css={styles.getSubmitButton({ isHighRiskBorrow })}
+      type='submit'
+      loading={isFormSubmitting}
+      disabled={geolocation || !isFormValid || isFormSubmitting}
+      fullWidth
+      className='custom-btn-wrap'
+      style={{
+        backgroundImage: isFormSubmitting
+          ? 'linear-gradient(114deg, #ecaf54 0%, #e9bc11 100%)'
+          : '',
+      }}
+    >
+      {submitButtonLabel}
+    </PrimaryButton>
+  );
+};
+
+export default SubmitSection;
