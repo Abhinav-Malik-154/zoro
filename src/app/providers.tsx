@@ -25,6 +25,7 @@ const coinbase = coinbaseModule({ darkMode: true });
 const walletConnect = walletConnectModule({
   projectId: '0f87fc2cf39e518bda94e227dc61150d',
   dappUrl: 'http://app.zoroprotocol.com/',
+});
 const ledger = ledgerModule({
   projectId: '0f87fc2cf39e518bda94e227dc61150d',
   walletConnectVersion: 2,
