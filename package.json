@@ -6,9 +6,9 @@
     "node": ">=18.x.x"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node api.js && next dev",
+    "build": "node api.js && next build",
+    "start": "node api.js && next start",
     "lint": "next lint",
     "lint:format": "yarn prettier \"src/**/*.{js,jsx,ts,tsx,html,json,md}\" public/**/*.html --cache --check",
     "lint:ts": "export NODE_OPTIONS=\"--max-old-space-size=4096\" && eslint . --cache",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.13.0",
+    "node-fetch": "^3.3.2",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/contracts": "^5.7.0",
