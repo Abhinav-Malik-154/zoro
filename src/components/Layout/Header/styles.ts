@@ -54,6 +54,7 @@ export const useStyles = () => {
       display: flex;
       align-items: center;
       margin-left: auto;
+      gap: 12px;
 
       ${theme.breakpoints.down("md")} {
         display: none;
